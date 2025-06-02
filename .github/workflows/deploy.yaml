@@ -11,9 +11,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      HOST: root@5.53.124.147
+      HOST: root@77.223.97.25
       DEPLOY_DIRECTORY: /root/apps/sso
       CONFIG_PATH: /root/apps/sso/config/prod.yaml
+      ENV_FILE_PATH: /root/apps/sso/config.env
       MIGRATION_MODE: "up-and-down"
 
     steps:
@@ -56,6 +57,13 @@ jobs:
         run: |
           echo "Listing deployment folder contents:"
           ls -la ${{ github.workspace }}/deployment
+      - name: Create environment file on server
+        run: |
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "\
+          touch ${{ env.ENV_FILE_PATH }} && \
+          chmod 600 ${{ env.ENV_FILE_PATH }} && \
+          echo 'CONFIG_PATH=${{ env.CONFIG_PATH }}' > ${{ env.ENV_FILE_PATH }} && \
+          echo 'DB_PASS=${{ secrets.DB_PASS }}' >> ${{ env.ENV_FILE_PATH }}"
       - name: Copy systemd service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/grpc-auth.service ${{ env.HOST }}:/tmp/grpc-auth.service
