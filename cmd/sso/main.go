@@ -80,8 +80,10 @@ func MustSetupEnvVars() {
 	var configPath string
 	flag.StringVar(&configPath, "config", "", "Path to config file")
 	flag.Parse()
-	err := os.Setenv("CONFIG_PATH", configPath)
-	if err != nil {
-		panic(err)
+	if configPath != "" {
+		err := os.Setenv("CONFIG_PATH", configPath)
+		if err != nil {
+			panic(err)
+		}
 	}
 }
