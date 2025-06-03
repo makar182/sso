@@ -50,9 +50,10 @@ jobs:
           rsync -avz -e 'ssh -i deploy_key.pem -o StrictHostKeyChecking=no' --exclude='.git' ./ ${{ env.HOST }}:${{ env.DEPLOY_DIRECTORY }}
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
-      - name: Remove old systemd service file
+      - name: Remove old systemd service files
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "rm -f /etc/systemd/system/sso.service"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "rm -f /etc/systemd/system/migrator.service"
       - name: List workspace contents
         run: |
           echo "Listing deployment folder contents:"
@@ -64,11 +65,11 @@ jobs:
           chmod 600 ${{ env.ENV_FILE_PATH }} && \
           echo 'CONFIG_PATH=${{ env.CONFIG_PATH }}' > ${{ env.ENV_FILE_PATH }} && \
           echo 'DB_PASS=${{ secrets.DB_PASS }}' >> ${{ env.ENV_FILE_PATH }}"
-      - name: Copy systemd service file
+      - name: Copy sso service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/sso.service ${{ env.HOST }}:/tmp/sso.service
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/sso.service"
-      - name: Copy systemd service migrator file
+      - name: Copy migrator service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/migrator.service ${{ env.HOST }}:/tmp/migrator.service
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/migrator.service /etc/systemd/system/migrator.service"
