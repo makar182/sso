@@ -16,3 +16,4 @@ CREATE TABLE IF NOT EXISTS public.users
 
 INSERT INTO apps (name, secret, timestamp)
 VALUES ('default', 'default_secret', NOW())
+ON CONFLICT DO NOTHING
