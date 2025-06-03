@@ -31,6 +31,7 @@ func main() {
 	//TODO: инициализация приложения (app)
 	application := app.NewApp(log, cfg)
 	go application.GRPCServer.MustRun()
+	log.Info("application started")
 	//TODO: запустить gRPC-сервер приложения
 
 	stop := make(chan os.Signal, 1)

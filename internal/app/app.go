@@ -22,8 +22,11 @@ func NewApp(
 		log.Error("failed to init storage : %s", sl.Err(err))
 		return nil
 	}
+	log.Info("storage initialized", slog.Any("db", cfg))
 	auth := authservice.NewAuthService(log, storage, storage, storage, cfg.TokenTTL)
+	log.Info("auth service initialized")
 	grpcApp := grpcApplication.NewApp(log, cfg.GRPC.Port, auth)
+	log.Info("gRPC server initialized", slog.Int("port", cfg.GRPC.Port))
 
 	return &App{
 		GRPCServer: grpcApp,
