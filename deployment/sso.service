@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=root
 WorkingDirectory=/root/apps/sso
-ExecStart=/root/apps/sso/sso --config /root/apps/sso/config.env
+ExecStart=/root/apps/sso/sso
 Restart=no
 RestartSec=4
 StandardOutput=inherit
