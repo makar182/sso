@@ -36,7 +36,7 @@ jobs:
       - name: Build app
         run: |
           go mod download
-          go build -o grpc-auth ./cmd/sso
+          go build -o sso ./cmd/sso
       - name: Build migrations
         run: |
           go mod download
@@ -66,11 +66,11 @@ jobs:
           echo 'DB_PASS=${{ secrets.DB_PASS }}' >> ${{ env.ENV_FILE_PATH }}"
       - name: Copy systemd service file
         run: |
-          scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/grpc-auth.service ${{ env.HOST }}:/tmp/grpc-auth.service
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/grpc-auth.service /etc/systemd/system/grpc-auth.service"
+          scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/sso.service ${{ env.HOST }}:/tmp/sso.service
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/ss0.service"
       - name: Run migrations
         run: |
           # ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "${{ env.DEPLOY_DIRECTORY }}/migrator --migrations-mode=${{ env.MIGRATION_MODE }} --config=${{ env.CONFIG_PATH }}
       - name: Run app
         run: |
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart grpc-auth.service"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart sso.service"
