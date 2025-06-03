@@ -59,7 +59,7 @@ func (a *Auth) Login(ctx context.Context, email string, password string, appId i
 	log := a.log.With(slog.String("op", op), slog.String("email", email), slog.Int("appId", appId))
 	user, err := a.userProvider.GetUserByEmail(email)
 	//зарефакторить этот блок по итогу реализации стореджа, потому что не ясно как будет выглядеть ненайденный юзер
-	if err != nil || user == nil {
+	if err != nil {
 		if errors.Is(err, storage.ErrUserNotFound) || user == nil {
 			log.Info("user not found", sl.Err(err))
 			return "", ErrInvalidCredentials
