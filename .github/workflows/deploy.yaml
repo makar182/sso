@@ -68,9 +68,13 @@ jobs:
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/sso.service ${{ env.HOST }}:/tmp/sso.service
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/sso.service"
+      - name: Copy systemd service migrator file
+        run: |
+          scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/migrator.service ${{ env.HOST }}:/tmp/migrator.service
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/migrator.service /etc/systemd/system/migrator.service"
       - name: Run migrations
         run: |
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "${{ env.DEPLOY_DIRECTORY }}/migrator --migrations-mode=${{ env.MIGRATION_MODE }} --config=${{ env.ENV_FILE_PATH }}"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart migrator.service"
       - name: Run app
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart sso.service"

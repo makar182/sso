@@ -110,11 +110,13 @@ func MustSetupEnvVars() {
 	flag.StringVar(&migrationsMode, "migrations-mode", "none", "Migration mode: How to migrate the database. Options: up, down, up-and-down and none")
 	flag.StringVar(&migrationsTable, "migrations-table", "migrations", "Name of the migrations table")
 	flag.Parse()
-	err := os.Setenv("CONFIG_PATH", configPath)
-	if err != nil {
-		panic(err)
+	if configPath != "" {
+		err := os.Setenv("CONFIG_PATH", configPath)
+		if err != nil {
+			panic(err)
+		}
 	}
-	err = os.Setenv("MIGRATIONS_MODE", migrationsMode)
+	err := os.Setenv("MIGRATIONS_MODE", migrationsMode)
 	if err != nil {
 		panic(err)
 	}
