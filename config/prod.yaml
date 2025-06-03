@@ -10,7 +10,7 @@ storage:
   db_ssl: "disable"
   db_host: "localhost"
   db_port: 5432
-  db_name: "auth_db"
-  db_user: "m.savushkin"
+  db_name: "sso_db"
+  db_user: "sso_user_prod"
 #  db_pass: "auth_user_local_pass"
 migration_source_file_path: "file:./migrations"
