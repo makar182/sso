@@ -67,7 +67,7 @@ jobs:
       - name: Copy systemd service file
         run: |
           scp -i deploy_key.pem -o StrictHostKeyChecking=no ${{ github.workspace }}/deployment/sso.service ${{ env.HOST }}:/tmp/sso.service
-          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/ss0.service"
+          ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/sso.service"
       - name: Run migrations
         run: |
           # ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "${{ env.DEPLOY_DIRECTORY }}/migrator --migrations-mode=${{ env.MIGRATION_MODE }} --config=${{ env.CONFIG_PATH }}
