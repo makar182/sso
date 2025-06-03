@@ -70,7 +70,7 @@ jobs:
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "mv /tmp/sso.service /etc/systemd/system/sso.service"
       - name: Run migrations
         run: |
-          # ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "${{ env.DEPLOY_DIRECTORY }}/migrator --migrations-mode=${{ env.MIGRATION_MODE }} --config=${{ env.CONFIG_PATH }}
+          # ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "${{ env.DEPLOY_DIRECTORY }}/migrator --migrations-mode=${{ env.MIGRATION_MODE }} --config=${{ env.ENV_FILE_PATH }}
       - name: Run app
         run: |
           ssh -i deploy_key.pem -o StrictHostKeyChecking=no ${{ env.HOST }} "systemctl daemon-reload && systemctl restart sso.service"
