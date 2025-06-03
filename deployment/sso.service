@@ -9,6 +9,7 @@ ExecStart=/root/apps/sso/sso --config /root/apps/sso/config.env
 Restart=no
 RestartSec=4
 StandardOutput=inherit
+EnvironmentFile=/root/apps/sso/config.env
 
 [Install]
 WantedBy=multi-user.target
