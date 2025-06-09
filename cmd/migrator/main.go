@@ -39,9 +39,10 @@ func main() {
 
 	//TODO: инициализировать логгер
 	log := setupLogger(cfg.Env)
-	log = log.With(slog.String("env", cfg.Env))
-
 	const op = "Storage.PostgreSQL.Migrations"
+	log = log.With(
+		slog.String("env", cfg.Env),
+		slog.String("op", op))
 
 	storagePath := cfg.StoragePath
 	migrationsTable := os.Getenv("MIGRATIONS_TABLE")

@@ -15,7 +15,7 @@ import (
 const (
 	emptyAppId = 0
 	appId      = 1
-	appSecret  = "test-secret"
+	appSecret  = "default_secret"
 
 	passDefaultLen = 10
 )

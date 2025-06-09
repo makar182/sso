@@ -15,6 +15,7 @@ type Auth interface {
 	Logout(ctx context.Context, token string) (bool, error)
 	Register(ctx context.Context, email string, password string) (int64, error)
 	IsAdmin(ctx context.Context, userId int64) (bool, error)
+	SetAdmin(ctx context.Context, userId int64, isAdmin bool) (bool, error)
 }
 
 type serverAPI struct {
@@ -81,6 +82,21 @@ func (s *serverAPI) IsAdmin(ctx context.Context, req *ssov1.IsAdminRequest) (*ss
 	}
 
 	return &ssov1.IsAdminResponse{
+		IsAdmin: isAdmin,
+	}, nil
+}
+
+func (s *serverAPI) SetAdmin(ctx context.Context, req *ssov1.SetAdminRequest) (*ssov1.SetAdminResponse, error) {
+	if req.GetUserId() == emptyValue {
+		return nil, status.Error(codes.InvalidArgument, "userId must be provided")
+	}
+
+	isAdmin, err := s.auth.SetAdmin(ctx, req.GetUserId(), req.GetIsAdmin())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to set admin status: %v", err)
+	}
+
+	return &ssov1.SetAdminResponse{
 		IsAdmin: isAdmin,
 	}, nil
 }

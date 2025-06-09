@@ -96,3 +96,15 @@ func (s *Storage) IsAdmin(userId int64) (bool, error) {
 	}
 	return isAdmin, nil
 }
+
+func (s *Storage) SetAdmin(userId int64, isAdmin bool) (bool, error) {
+	const op = "Storage.PostgreSQL.SetAdmin"
+	_, err := s.db.Exec("UPDATE users SET is_admin = $1 WHERE id = $2", isAdmin, userId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, fmt.Errorf("%s:%w", op, storage.ErrUserNotFound)
+		}
+		return false, fmt.Errorf("%s:%w", op, err)
+	}
+	return true, nil
+}

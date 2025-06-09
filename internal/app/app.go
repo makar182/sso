@@ -16,6 +16,10 @@ type App struct {
 func NewApp(
 	log *slog.Logger,
 	cfg *config.Config) *App {
+	const op = "app.Application.Run"
+	log = log.With(
+		slog.String("operation", op),
+	)
 
 	storage, err := psql.New(cfg)
 	if err != nil {
@@ -23,7 +27,7 @@ func NewApp(
 		return nil
 	}
 	log.Info("storage initialized", slog.Any("db", cfg))
-	auth := authservice.NewAuthService(log, storage, storage, storage, cfg.TokenTTL)
+	auth := authservice.NewAuthService(log, storage, storage, storage, storage, cfg.TokenTTL)
 	log.Info("auth service initialized")
 	grpcApp := grpcApplication.NewApp(log, cfg.GRPC.Port, auth)
 	log.Info("gRPC server initialized", slog.Int("port", cfg.GRPC.Port))

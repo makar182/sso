@@ -17,6 +17,7 @@ type Auth struct {
 	userSaver    UserSaver
 	userProvider UserProvider
 	appProvider  AppProvider
+	adminSetter  AdminSetter
 	tokenTTL     time.Duration
 }
 
@@ -33,6 +34,10 @@ type AppProvider interface {
 	GetAppById(appId int) (*models.App, error)
 }
 
+type AdminSetter interface {
+	SetAdmin(userId int64, isAdmin bool) (bool, error)
+}
+
 var (
 	ErrInvalidCredentials  = errors.New("invalid credentials")
 	ErrInternalServerError = errors.New("internal server error")
@@ -44,6 +49,7 @@ func NewAuthService(
 	userSaver UserSaver,
 	userProvider UserProvider,
 	appProvider AppProvider,
+	adminSetter AdminSetter,
 	tokenTTL time.Duration) *Auth {
 	return &Auth{
 		log:          log,
@@ -141,5 +147,23 @@ func (a *Auth) IsAdmin(ctx context.Context, userId int64) (bool, error) {
 		log.Error("failed to check if user is admin", sl.Err(err))
 		return false, ErrInternalServerError
 	}
+	return isAdmin, nil
+}
+
+func (a *Auth) SetAdmin(ctx context.Context, userId int64, isAdmin bool) (bool, error) {
+	const op = "Auth.SetAdmin"
+	log := a.log.With(slog.String("op", op), slog.Int64("userId", userId), slog.Bool("isAdmin", isAdmin))
+
+	isAdmin, err := a.adminSetter.SetAdmin(userId, isAdmin)
+	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			log.Info("user not found", sl.Err(err))
+			return false, ErrInvalidCredentials
+		}
+		log.Error("failed to set admin status", sl.Err(err))
+		return false, ErrInternalServerError
+	}
+
+	log.Info("admin status updated successfully", slog.Int64("userId", userId), slog.Bool("isAdmin", isAdmin))
 	return isAdmin, nil
 }
